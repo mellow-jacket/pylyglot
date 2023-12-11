@@ -46,7 +46,7 @@ The raw_chapters and final_chapters for these are not committed.
  - url only used in scrape
  - api_key = None will run in a debug mode
 
-      issue = ct.issue(name='example',url = None, api_key = api_key )
+        issue = ct.issue(name='example',url = None, api_key = api_key )
 
 # Scarping images
 
