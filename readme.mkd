@@ -61,19 +61,20 @@ The raw_chapters and final_chapters for these are not committed.
 # Image formatting tools
 
  Scraped images are not conveniently formatted, use these tools to fix them
-  Do not call on first or last image (page_num_1 or page_num_#final)
+ Do not call on first or last image (page_num_1 or page_num_#final)
+
+ split file at click, combine top with previous, bottom with next, reindex names
 
       ct.split_file(rel_path)
 
-   - split file at click, combine top with previous, bottom with next, reindex names
+ split file at click, two new files, reindex names
 
       ct.separate_file(rel_path) 
-   
-   - split file at click, two new files, reindex names
+
+ older combine based on raw_image numbering [must run after downsample]
 
       issue.combine_pages(page1, page2)
 
-   - older combine based on raw_image numbering [must run after downsample]
 
 # Change resolution & prepare OCR
 
@@ -109,11 +110,11 @@ This process isn't strictly necessary. It does improve the performance of both O
 
 # Translate page and make the pdf
 
-      issue.translate()
-
    - Automatically calls gpt on image with a specified prompt
    - The prompt is defined in ctpy/translate.py 
 
-      issue.make_pdf()
-
+         issue.translate()
    - Bind everything into a pdf
+
+         issue.make_pdf()
+
