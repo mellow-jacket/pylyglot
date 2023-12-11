@@ -1,0 +1,9 @@
+IMAGE_DESCRIPTION
+The image shows a cute, stylized skeleton with large blue eyes and an oversized head in comparison to its body. It is seated on the ground in a cross-legged position with its hands resting on its knees. The skeleton is facing towards us, and there's a speech bubble coming from it, containing Korean text.
+
+BEGIN_TEXT
+KOREAN_TEXT
+세계여, 안 녕하세요!
+ENGLISH_TEXT
+Hello world!
+END_TEXT

@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-8UNwNkqF72mJNNYyYnkhXswf86o8k",
+    "object": "chat.completion",
+    "created": 1702252559,
+    "model": "gpt-4-1106-vision-preview",
+    "usage": {
+        "prompt_tokens": 2708,
+        "completion_tokens": 94,
+        "total_tokens": 2802
+    },
+    "choices": [
+        {
+            "message": {
+                "role": "assistant",
+                "content": "IMAGE_DESCRIPTION\nThe image shows a cute, stylized skeleton with large blue eyes and an oversized head in comparison to its body. It is seated on the ground in a cross-legged position with its hands resting on its knees. The skeleton is facing towards us, and there's a speech bubble coming from it, containing Korean text.\n\nBEGIN_TEXT\nKOREAN_TEXT\n세계여, 안 녕하세요!\nENGLISH_TEXT\nHello world!\nEND_TEXT"
+            },
+            "finish_details": {
+                "type": "stop",
+                "stop": "<|fim_suffix|>"
+            },
+            "index": 0
+        }
+    ]
+}

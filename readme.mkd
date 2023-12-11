@@ -1,0 +1,81 @@
+# CTpy Comic Translator
+
+Python code to scrape and translate Skeleton Soldier Couldn't Protect the Dungeon.
+
+[View an example translation](/final_chapters/example.pdf)
+
+Setup and install isntructions are below.
+
+If you want to help, but don't want to see the code, please check out ctpy/examples.txt.
+It contains examples for the AI in this form...
+
+    The skeleton soldier couldn't protect the dungeon
+    해골병사는 던전을 지키지 못했다
+
+Any direct transltions of this form would help future automatic translations improve.
+
+
+## Setup and installation
+
+This module will require conda for setting up the enviroment. 
+Other methods can be used, but are not described in this readme.
+
+You will need to create a file named ".env"
+
+In this file, paste your api_key as...
+   API_KEY='your_api_key'
+
+With conda on your system path run...
+    conda create --name comic_translator python=3.11.6
+    conda activate comic_translator
+    pip install -r requirements.txt
+
+Notes for using the module
+
+Check out example.ipynb to see an example
+
+This example will work without an api_key, but only because an /example folder is committed.
+
+# Scarping images
+issue.scrape() 
+ - NOT safe to call twice
+ - it should be called once then commented out
+  
+# Image formatting tools
+
+ Scraped images are not conveniently formatted, use these tools to fix them
+  - Do not call on first or last image (page_num_1 or page_num_#final)
+
+   - ct.split_file(rel_path)
+      - split file at click, combine top with previous, bottom with next, reindex names
+   - ct.separate_file(rel_path) 
+      - split file at click, two new files, reindex names
+   - issue.combine_pages(page1, page2)
+      - older combine based on raw_image numbering [must run after downsample]
+
+# Change resolution & prepare OCR
+issue.downsample(scale_factor = float)
+   - resample image, prepare for OCR, save raw for pdf
+   - must be called
+
+# BoxDrawer
+
+A user must go through each image and draw a box around text.
+This process isn't strictly necessary. It does improve the performance of both OCR and GPT. 
+
+drawer = ct.BoxDrawer(test,start = 0, end = 20)
+drawer.draw()
+ - start/end specified so that the notebook doesnt crash
+ - click corners to define a box around all text
+
+issue.combine_gpt_and_ocr()
+   - Horizontally concat OCR image to normal image.
+   - Improves GPT performance, but its more expensive for a bigger image
+   - This call is not needed, but the prompt may need to be changed.
+
+issue.translate()
+   - Automatically calls gpt on image with a specified prompt
+   - The prompt is defined in ctpy/translate.py 
+
+issue.make_pdf()
+   - Bind everything into a pdf
