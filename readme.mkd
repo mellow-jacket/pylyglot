@@ -42,18 +42,15 @@ The raw_chapters and final_chapters for these are not committed.
 
 # Initialize issue class
 
-   issue = ct.issue(
-      name='example',
-      url = None, # None uses test_images
-      api_key = api_key
-      )
  - name determines the name in raw_ and final_chapters
  - url only used in scrape
  - api_key = None will run in a debug mode
 
+      issue = ct.issue(name='example',url = None, api_key = api_key )
+
 # Scarping images
 
-   issue.scrape() 
+      issue.scrape() 
 
  - NOT safe to call twice
  - it should be called once then commented out
