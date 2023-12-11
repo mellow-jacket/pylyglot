@@ -36,50 +36,84 @@ With conda on your system path run...
 
 Notes for using the module
 
-Check out example.ipynb to see an example
+Check out example.ipynb to see an example. 
+Code to produce translated issues is in /notebooks. 
+The raw_chapters and final_chapters for these are not committed.
 
-This example will work without an api_key, but only because an /example folder is committed.
+# Initialize issue class
+
+   issue = ct.issue(
+      name='example',
+      url = None, # None uses test_images
+      api_key = api_key
+      )
+ - name determines the name in raw_ and final_chapters
+ - url only used in scrape
+ - api_key = None will run in a debug mode
 
 # Scarping images
-issue.scrape() 
+
+   issue.scrape() 
+
  - NOT safe to call twice
  - it should be called once then commented out
   
 # Image formatting tools
 
  Scraped images are not conveniently formatted, use these tools to fix them
-  - Do not call on first or last image (page_num_1 or page_num_#final)
+  Do not call on first or last image (page_num_1 or page_num_#final)
 
-   - ct.split_file(rel_path)
+   ct.split_file(rel_path)
+
       - split file at click, combine top with previous, bottom with next, reindex names
-   - ct.separate_file(rel_path) 
+
+   ct.separate_file(rel_path) 
+   
       - split file at click, two new files, reindex names
-   - issue.combine_pages(page1, page2)
+
+   issue.combine_pages(page1, page2)
+
       - older combine based on raw_image numbering [must run after downsample]
 
 # Change resolution & prepare OCR
-issue.downsample(scale_factor = float)
+
+   issue.downsample(scale_factor = float)
+
    - resample image, prepare for OCR, save raw for pdf
    - must be called
 
 # BoxDrawer
 
 A user must go through each image and draw a box around text.
+You can press 'previous', 'next', or 'quit' tomove images.
+Press next when you are done drawing boxes on an image.
+Press next without drawing boxes if there is no text.
+Focus on text in text boxes, not sound effects.
+
 This process isn't strictly necessary. It does improve the performance of both OCR and GPT. 
 
-drawer = ct.BoxDrawer(test,start = 0, end = 20)
-drawer.draw()
+   drawer = ct.BoxDrawer(test,start = 0, end = 20)
+
+   drawer.draw()
+
  - start/end specified so that the notebook doesnt crash
  - click corners to define a box around all text
 
-issue.combine_gpt_and_ocr()
+# Combine OCR image for GPT
+
+   issue.combine_gpt_and_ocr()
+
    - Horizontally concat OCR image to normal image.
    - Improves GPT performance, but its more expensive for a bigger image
    - This call is not needed, but the prompt may need to be changed.
 
-issue.translate()
+# Translate page and make the pdf
+
+   issue.translate()
+
    - Automatically calls gpt on image with a specified prompt
    - The prompt is defined in ctpy/translate.py 
 
-issue.make_pdf()
+   issue.make_pdf()
+
    - Bind everything into a pdf
