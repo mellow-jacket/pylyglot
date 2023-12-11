@@ -4,6 +4,8 @@ Python code to scrape and translate Skeleton Soldier Couldn't Protect the Dungeo
 
 [View an example translation](/final_chapters/example.pdf)
 
+[Google drive link to translated chapters](https://drive.google.com/drive/folders/1svq-2SuqnTngff66doalNcpf7AWxJE8g?usp=drive_link)
+
 Setup and install isntructions are below.
 
 If you want to help, but don't want to see the code, please check out ctpy/examples.txt.
