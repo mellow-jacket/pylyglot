@@ -11,8 +11,10 @@ from .translate import translate, translate_image
 from .make_pdf import make_pdf
 from .img_download import scrape
 
-IMGPATH = config().img_path
-TESTPATH = config().testimg_path
+cfg = config()
+IMGPATH = cfg.img_path
+TESTPATH = cfg.testimg_path
+BENCHMARK = cfg.benchmark_path
 
 class issue:
 
@@ -91,6 +93,11 @@ class issue:
                 file_path = os.path.join(TESTPATH, filename)
                 if os.path.isfile(file_path):
                     shutil.copy(file_path, self.path['raw_image'])        
+        elif self.url == 'benchmark':
+            for filename in os.listdir(BENCHMARK):
+                file_path = os.path.join(BENCHMARK, filename)
+                if os.path.isfile(file_path):
+                    shutil.copy(file_path, self.path['raw_image'])  
         else:
             scrape(self)
 

@@ -10,3 +10,4 @@ class config:
         self.examples_path = os.path.join(self.abs_path,'examples.txt')
         self.suffix_path = os.path.join(self.abs_path,'prompt_suffix.txt')
         self.testimg_path = os.path.join(self.abs_path,'..','test_images')
+        self.benchmark_path = os.path.join(self.abs_path,'..','benchmark')
