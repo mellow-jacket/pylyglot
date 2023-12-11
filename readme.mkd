@@ -23,11 +23,15 @@ Other methods can be used, but are not described in this readme.
 You will need to create a file named ".env"
 
 In this file, paste your api_key as...
+
    API_KEY='your_api_key'
 
 With conda on your system path run...
+
     conda create --name comic_translator python=3.11.6
+
     conda activate comic_translator
+
     pip install -r requirements.txt
 
 Notes for using the module
