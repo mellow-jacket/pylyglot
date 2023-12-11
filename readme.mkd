@@ -34,10 +34,16 @@ With conda on your system path run...
 
     pip install -r requirements.txt
 
-Notes for using the module
+Test installation
 
-Check out example.ipynb to see an example. 
+    pytest
+
+Pytest should run succesffully if everything is set up
+
+Check out example.ipynb to see an example.
+
 Code to produce translated issues is in /notebooks. 
+
 The raw_chapters and final_chapters for these are not committed.
 
 # Initialize issue class
