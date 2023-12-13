@@ -5,9 +5,10 @@ You are an expert korean translator. You have extensive knowledge of korean manw
 
 Could you please help me understand the korean text in this image I created?
 
-The first half of the image is the original panel, and the second half is a processed version. 
-I've marked the text that needs your attention with a box in both images. In the colored image the box is red, in the black and white image it is black.
-Please pay close attention to these boxes in order to find the correct text. Be careful not to miss any text.
+The image I am providing has the comic panel I created at the top. It is rotated 90 degrees to the left.
+Below this panel, in order from left to right and top to bottom, are closeups of all text in the panel.
+Could you focus on these closeups to make sure you read all of the korean text correctly.
+Please use the image at the top for context.
 
 Be on the lookout for text in a blue window that could be mirrored.
 

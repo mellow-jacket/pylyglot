@@ -4,8 +4,11 @@ import matplotlib.patches as patches
 import pytesseract
 from PIL import Image, ImageDraw
 import json
+import shutil
 
 from .issue import issue
+
+from .ocr_tools import perform_ocr_on_all_images, ocr_on_box
 
 class BoxDrawer:
     def __init__(self, issue = None, start = 0, end = None):
@@ -25,21 +28,12 @@ class BoxDrawer:
         self.current_image_index = 0
         self.boxes = []
         self.current_box = []
-        self.fig, self.ax = plt.subplots()
-        self.img = plt.imread(os.path.join(self.path['image'], self.images[self.current_image_index]))
-        self.image_display = self.ax.imshow(self.img)
-        self.setup_ui()
+
+    def perform_ocr_on_all_images(self):
+        perform_ocr_on_all_images(self)
 
     def ocr_on_box(self,image, box, lang='kor'):
-        """
-        Perform OCR on a specific box of the image.
-        """
-        # Crop the image to the box
-        cropped_image = image.crop((box[0][0], box[0][1], box[1][0], box[1][1]))
-        
-        # Perform OCR on the cropped image
-        text = pytesseract.image_to_string(cropped_image, lang=lang, config='--oem 3 --psm 11')
-        return text.replace('\n', '').replace('PSM 11 Result:', '')
+        ocr_on_box(self,image, box, lang=lang)
 
     def update_image(self):
         # Clear the axes completely
@@ -109,17 +103,17 @@ class BoxDrawer:
         with open(os.path.join(self.path['box_coords'], f'{image_name}.txt'), 'w') as f:
             json.dump(self.boxes, f)
 
-        # Save image with boxes
-        image = Image.open(os.path.join(self.path['image'], self.images[self.current_image_index]))
-        ocr_image = Image.open(os.path.join(self.path['ocr_image'], self.images[self.current_image_index]))
-        if self.boxes:  # Check if there are boxes to draw
-            draw = ImageDraw.Draw(image)
-            draw2 = ImageDraw.Draw(ocr_image)
-            for box in self.boxes:
-                draw.rectangle([box[0], box[1]], outline="red", width=5)
-                draw2.rectangle([box[0], box[1]], outline="red", width=5)
-        image.save(os.path.join(self.path['gpt_image'], self.images[self.current_image_index]))
-        ocr_image.save(os.path.join(self.path['ocr_image'], self.images[self.current_image_index]))
+        # # Save image with boxes
+        # image = Image.open(os.path.join(self.path['image'], self.images[self.current_image_index]))
+        # ocr_image = Image.open(os.path.join(self.path['ocr_image'], self.images[self.current_image_index]))
+        # if self.boxes:  # Check if there are boxes to draw
+        #     draw = ImageDraw.Draw(image)
+        #     draw2 = ImageDraw.Draw(ocr_image)
+        #     for box in self.boxes:
+        #         draw.rectangle([box[0], box[1]], outline="red", width=5)
+        #         draw2.rectangle([box[0], box[1]], outline="red", width=5)
+        # image.save(os.path.join(self.path['gpt_image'], self.images[self.current_image_index]))
+        # ocr_image.save(os.path.join(self.path['ocr_image'], self.images[self.current_image_index]))
 
 
     def quit_handler(self, event):
@@ -151,29 +145,23 @@ class BoxDrawer:
         self.button_quit.on_clicked(self.quit_handler)
 
 
-    def perform_ocr_on_all_images(self):
-        for image_name in self.image_names:
-            try:
-                image_path = os.path.join(self.path['ocr_image'], f'{image_name}.jpeg')
-                boxes_path = os.path.join(self.path['box_coords'], f'{image_name}.txt')
-
-                # Load boxes from saved file
-                with open(boxes_path, 'r') as f:
-                    boxes = json.load(f)
-
-                # Perform OCR on the boxes and save the results
-                image = Image.open(image_path)
-                ocr_results = "OCR Analysis:\n"
-                for box in boxes:
-                    box_text = self.ocr_on_box(image, box)
-                    ocr_results += box_text + '\n'
-            except:
-                ocr_results = "OCR Analysis:\n"
-
-            # Save OCR results
-            with open(os.path.join(self.path['ocr_text'], f'{image_name}.txt'), 'w') as file:
-                file.write(ocr_results)
-
     def draw(self):
+        self.fig, self.ax = plt.subplots()
+        self.img = plt.imread(os.path.join(self.path['image'], self.images[self.current_image_index]))
+        self.image_display = self.ax.imshow(self.img)
+        
+        self.setup_ui()
+
         plt.show()
     
+    def load(self, name='name'):
+        # Define the source directory based on the provided name
+        src_directory = os.path.join('box_saves', name)
+
+        # Destination directory from the class's path attribute
+        dest_directory = self.path['box_coords']
+        # Copy each file from the source directory to the destination directory
+        for filename in os.listdir(src_directory):
+            file_path = os.path.join(src_directory, filename)
+            if os.path.isfile(file_path):
+                shutil.copy(file_path, dest_directory)
