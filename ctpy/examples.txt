@@ -10,15 +10,6 @@ Scenario in progress...
 Current Allied Cities - Grasmere, Yublam, Erast
 현재 동지 도시-그란디시아, 유랑민, 에퀘스트
 
-Grasmere
-그란디시아
-
-Yublam
-유랑민
-
-Erast
-에퀘스트
-
 Rubia
 루비아
 
@@ -46,6 +37,9 @@ Botis
 Miyu
 미유
 
+Governor General
+총관님
+
 Marquis, listen up!
 후작은 들어라!
 
@@ -61,7 +55,7 @@ The skeleton soldier couldn't protect the dungeon
 You have acquired Sword Energy Lv. 3!
 강기 Lv. 3을 회득하였습니다!
 
-To think that Skeleton Soldier would be this strong.
+I never thought a skeleton soldier would be this strong.
 스켈레톤 병사가 이렇게 강할 줄은.
 
 Is this the end for me?
@@ -82,7 +76,7 @@ The Empire is moving. We still have time, but a direct confrontation would lead 
 Governance level is still at 8. Rubia scenario governance level: 8.
 지배 수준은 아직 8이다. 루비아 시나리오의 지배 수준: 8.
 
-I thought I would succeed this time, but it seems I'm failing the scenario again.
+I thought I would succeed this time, but it seems that I'm failing the scenario again.
 이번에는 성공할 줄 알았는데, 또 시나리오에 실패하는 것 같다.
 
 Rena contacted you, didn't she? How are the preparations?
@@ -118,9 +112,6 @@ She's a member of Red Flake? The book's content has changed.
 This guy here is my greatest interest. Dr. Seol Ah. Specialty is... research. Hobby is also... research.
 여기 이 녀석은 내 가장 큰 관심사야. 설 아 박사. 전문 분야는... 연구. 취미도... 연구야.
 
-Research is... fun. Do you like research too?
-연구는... 재미있다. 너도 연구를 좋아하니?
-
 저분은 영주님 아니신가?
 Is that the lord?
 
@@ -147,6 +138,18 @@ Coming here alone was reckless.
 
 뭐, 덕분에 시간은 벌었지만.
 Well, thanks to you, we've bought some time.
+
+공포스러운 체통 귀족이 아갔으며 행복을 되찾아주신 분이 누구인지!!
+Remember the lord who vanished into horror and who has restored happiness!!
+
+The Chandler family has been smashed to pieces.
+채터러리 가문이 분자로로 일괄 조정됩니다.
+
+It's all a clumsy act meant to protect us!!
+우리를 지켜 주기 위한 어쩔 수 없는 열기가!!
+
+Order of the Blue Lion Knights!!
+푸른 사자 기사단!!
 
 DO NOT INCLUDE THESE EXAMPLES DIRECTLY unless they happen to be in the image exactly.
 Please think about them before responding to make sure your answer is consistent with them.

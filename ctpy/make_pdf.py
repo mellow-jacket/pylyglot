@@ -65,8 +65,11 @@ def wrap_text(text, max_line_length, font, draw):
                 wrapped_lines.append(current_line)
         else:
             consecutive_breaks += 1
-            if consecutive_breaks < 3:  # Allow up to two consecutive line breaks
+            if consecutive_breaks < 1:  # Allow up to two consecutive line breaks
                 wrapped_lines.append('')
+        #if english_counter == 1 and korean_counter == 1:
+        #    if wrapped_lines[-1] is not '':
+        #        wrapped_lines.append('')
 
     while wrapped_lines and wrapped_lines[0] == '':
         wrapped_lines.pop(0)
@@ -111,10 +114,10 @@ def make_pdf(self):
                             print('failed to read response of : ', text_path)
                         wrapped_text = wrap_text(text, LINEWIDTH, font, draw)  # Set max_line_length as needed
 
-                        y_offset = 10
+                        y_offset = 15
                         for line in wrapped_text:
                             draw.text((img.width + 10, y_offset), line, fill="black", font=font)
-                            y_offset += line_height  # Adjust line spacing based on scaled line height
+                            y_offset += line_height # Adjust line spacing based on scaled line height
 
 
                 temp_path = f'temp_{uuid.uuid4()}.jpg'

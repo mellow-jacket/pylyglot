@@ -1,7 +1,13 @@
 __pycache__/*
 */__pycache__/*
 */*/__pycache__/*
+box_saves/*
 
 raw_chapters/issue*
 final_chapters/issue*
-
+raw_chapters/test*
+final_chapters/test*
+raw_chapters/dev
+final_chapters/dev
+raw_chapters/benchmark
+final_chapters/benchmark
