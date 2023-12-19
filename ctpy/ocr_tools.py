@@ -10,7 +10,8 @@ from PIL import Image
 import pytesseract
 
 def perform_ocr_on_all_images(self, lang='kor'):
-    for image_name in self.image_names:
+    for image_name in os.listdir(self.path['image']):
+        image_name = image_name.split('.')[0]
         try:
             image_path = os.path.join(self.path['ocr_image'], f'{image_name}.jpeg')
             boxes_path = os.path.join(self.path['box_coords'], f'{image_name}.txt')

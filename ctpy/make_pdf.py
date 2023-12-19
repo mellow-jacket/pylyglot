@@ -52,6 +52,7 @@ def wrap_text(text, max_line_length, font, draw):
             continue
         if contains_korean(line): continue
         if line:  # Check if line is not empty
+            line = line.replace('"','')
             words = line.split()
             current_line = ''
             consecutive_breaks = 0  # Reset consecutive breaks count

@@ -5,12 +5,16 @@ from PIL import Image, ImageDraw
 import pytesseract
 import shutil
 import json
+
 from .config import config
 from .img_tools import downscale_image, _combine_pages
-from .translate import translate, translate_image
+from .translate import translate, translate_image_gpt, translate_image_gemini
 from .make_pdf import make_pdf
-from .img_download import scrape
+from .img_download import scrape, scrape_md
 from .ocr_tools import perform_ocr_on_all_images
+from .autobox import md_image_cleaner, process_directory
+from .splits import increment_file_names, reindex_file_names
+
 
 cfg = config()
 IMGPATH = cfg.img_path
@@ -31,6 +35,7 @@ class issue:
                 name = 'test158',
                 url = 'https://newtoki317.com/webtoon/32675929?toon=%EC%9D%BC%EB%B0%98%EC%9B%B9%ED%88%B0',
                 api_key = None,
+                gemini_key = None,
                 ):
         '''
         Issue of skeleton soldier
@@ -45,6 +50,8 @@ class issue:
             self.force_debug = False
         self.api_key = api_key
 
+        self.gemini_key = gemini_key
+
         self.raw_direc = 'raw_chapters'
         self.final_direc = 'final_chapters'
 
@@ -52,6 +59,7 @@ class issue:
         self.path = {
             'base':base_path,
             'image':os.path.join(base_path, 'images'),
+            'scraped_image':os.path.join(base_path, 'scraped_images'),
             'raw_image':os.path.join(base_path, 'raw_images'),
             'text':os.path.join(base_path, 'text'),
             'raw_combined':os.path.join(base_path, 'raw_combined'),
@@ -73,7 +81,7 @@ class issue:
         '''
         for key, dir_path in self.path.items():
             # Skip the 'base' and 'raw_image' directories
-            if key in ['base', 'raw_image']:
+            if key in ['base', 'raw_image', 'scraped_image']:
                 continue
 
             # Check if the directory exists
@@ -90,23 +98,49 @@ class issue:
                 if not os.path.exists(dir_path):
                     os.makedirs(dir_path)
 
-    def translate(self, debug = False):
+    def translate(self, debug = False, model = 'gpt'):
         '''
         Wrapper for translate.py/translate
         '''
-        translate(self, debug = debug)
+        translate(self, debug = debug, model = model)
 
-    def translate_image(self, name, ocr_result, suffix = None):
+    def translate_image_gpt(self, name, ocr_result, suffix = None):
         '''
         Wrapper for translate.py/translate_image
         '''
-        return translate_image(self, name, ocr_result, suffix = suffix)
+        return translate_image_gpt(self, name, ocr_result, suffix = suffix)
+
+    def translate_image_gemini(self, name, ocr_result, suffix = None):
+        '''
+        Wrapper for translate.py/translate_image
+        '''
+        return translate_image_gemini(self, name, ocr_result, suffix = suffix)
+
+    def autobox(self, lang='kor'):
+        '''
+        Automatically generate some boxes on images
+        '''
+        process_directory(input_dir=self.path['image'], output_dir=self.path['box_coords'], lang=lang)
 
     def make_pdf(self):
         '''
         Wrapper for make_pdf.py/make_pdf
         '''
         make_pdf(self)
+
+    def md_scrape(self):
+        scrape_md(self)
+        self.reindex_direc()
+
+    def md_autosplit(self):
+        cleaner = md_image_cleaner(in_directory=self.path['scraped_image'], out_directory = self.path['raw_image'])
+        cleaner.split_raws()
+        cleaner.clean_splits()
+        self.reindex_direc()
+
+    def reindex_direc(self, label = 'raw_image'):
+            # reindex file names given label for path 
+            reindex_file_names(self.path[label])
 
     def scrape(self):
         '''
@@ -117,14 +151,23 @@ class issue:
             for filename in os.listdir(TESTPATH):
                 file_path = os.path.join(TESTPATH, filename)
                 if os.path.isfile(file_path):
-                    shutil.copy(file_path, self.path['raw_image'])        
+                    shutil.copy(file_path, self.path['scraped_image'])        
         elif self.url == 'benchmark':
             for filename in os.listdir(BENCHMARK):
                 file_path = os.path.join(BENCHMARK, filename)
                 if os.path.isfile(file_path):
-                    shutil.copy(file_path, self.path['raw_image'])  
+                    shutil.copy(file_path, self.path['scraped_image'])  
         else:
             scrape(self)
+
+        # populate raw from scraped
+        if not os.listdir(self.path['raw_image']):
+            for filename in os.listdir(self.path['scraped_image']):
+                file_path = os.path.join(self.path['scraped_image'], filename)
+                if os.path.isfile(file_path):
+                    shutil.copy(file_path, self.path['raw_image'])  
+
+
 
     def downsample(self, scale_factor = 0.5):
         '''
@@ -210,8 +253,18 @@ class issue:
                 flat_box = [int(coord) for point in box for coord in point]
                 draw.rectangle(flat_box, outline="red", width=5)
 
+            # Load and draw boxes on the ocr image
+            ocr_path = os.path.join(self.path['ocr_image'], img_name)
+            ocr_image = Image.open(ocr_path)
+            ocr_draw = ImageDraw.Draw(ocr_image)
+            for box in boxes:
+                # Flatten the box list and convert to integers
+                flat_box = [int(coord) for point in box for coord in point]
+                ocr_draw.rectangle(flat_box, outline="red", width=5)
+
             # Save the image with boxes
             image.save(os.path.join(self.path['image'], img_name))
+            ocr_image.save(os.path.join(self.path['ocr_image'], img_name))
 
     def tile_page_for_gpt(self):
         '''
@@ -293,3 +346,11 @@ class issue:
         return max_y_coordinate + border_size
     
 
+    def resize_gpt(self, scale=2.0):
+        image_dir = self.path['gpt_image']
+        for filename in os.listdir(image_dir):
+            file_path = os.path.join(image_dir, filename)
+            with Image.open(file_path) as img:
+                new_size = tuple([int(dim * scale) for dim in img.size])
+                img = img.resize(new_size, Image.LANCZOS)
+            img.save(file_path)

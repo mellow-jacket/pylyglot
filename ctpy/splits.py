@@ -21,6 +21,7 @@ def split_and_combine(split_path, split_pos):
         directory = os.path.sep.join(split_path.split(os.path.sep)[:-1])
     else:
         directory = os.path.sep.join(split_path.split('/')[:-1])
+
     split_file = split_path.split(os.path.sep)[-1]
     file_index = split_file.split('.jp')[0]
     file_index = file_index.split('_num_')[-1]
@@ -57,21 +58,31 @@ def split_and_combine(split_path, split_pos):
     # Remove the original split image
     os.remove(split_path)
 
-def on_click(event,path):
+def resize_image_for_display(img, max_height):
+    """Resize an image for display within the given max_height while maintaining aspect ratio."""
+    aspect_ratio = img.width / img.height
+    new_width = int(max_height * aspect_ratio)
+    return img.resize((new_width, max_height), Image.LANCZOS)
+
+def on_click(event,original_img, path):
     global current_ind
     current_ind+=1
+    y_scale = original_img.height / event.widget.winfo_height()
+    split_pos = int(event.y * y_scale)
     # Event handler for mouse click
     print('path is : ', path)
-    success = split_and_combine(path, event.y)
+    success = split_and_combine(path, split_pos)
     if success:
         print("Image split and combined successfully.")
     root.destroy()
 
 # Modify the on_click function to use separate_file
-def on_click2(event, path):
+def on_click2(event, original_img, path):
     global current_ind
     current_ind += 1
-    _separate_file(path, event.y)
+    y_scale = original_img.height / event.widget.winfo_height()
+    split_pos = int(event.y * y_scale)
+    _separate_file(path, split_pos)
     print("Image separated into two and files renamed successfully.")
     root.destroy()
 
@@ -129,13 +140,18 @@ def split_file(path):
     current_ind=0
     if os.path.exists(path):
         root = tk.Tk()
+        root.title("Click on the image to split")
 
-        # Load and pack the image
-        img = Image.open(path)
+        # Load the original image
+        original_img = Image.open(path)
+
+        # Resize the image for display
+        screen_height = root.winfo_screenheight() - 100  # Adjust for window borders/taskbar
+        img = resize_image_for_display(original_img, screen_height)
         tk_img = ImageTk.PhotoImage(img)
         panel = tk.Label(root, image=tk_img)
         panel.pack(side="top", fill="both", expand="yes")
-        panel.bind("<Button-1>", lambda event: on_click(event, path))
+        panel.bind("<Button-1>", lambda event: on_click(event, original_img, path))
 
         root.mainloop()
         #print('checking directory : ', directory)
@@ -178,23 +194,39 @@ def separate_file(path):
     if os.path.exists(path):
         root = tk.Tk()
 
-        img = Image.open(path)
+        original_img = Image.open(path)
+
+        # Resize the image for display
+        screen_height = root.winfo_screenheight() - 100  # Adjust for window borders/taskbar
+        img = resize_image_for_display(original_img, screen_height)
         tk_img = ImageTk.PhotoImage(img)
         panel = Label(root, image=tk_img)
         panel.pack(side="top", fill="both", expand="yes")
-        panel.bind("<Button-1>", lambda event: on_click2(event, path))
+        panel.bind("<Button-1>", lambda event: on_click2(event, original_img,  path))
 
         root.mainloop()
     else:
         print(f"File {filename} not found in the directory.")
 
-def increment_file_names(directory, starting_number):
+def increment_file_names(directory, starting_number = 0):
     files = [f for f in os.listdir(directory) if f.startswith('page_num_') and f.endswith('.jpeg')]
-    files.sort(key=lambda x: int(x.split('_')[-1].split('.')[0]))
+    sorted_filenames = sorted(files, key=natural_sort_key)
 
-    for file in reversed(files):
+    for file in reversed(sorted_filenames):
         number = int(file.split('_')[-1].split('.')[0])
         if number > starting_number:
             new_number = number + 1
             new_filename = file.replace(f"_{number}.jpeg", f"_{new_number}.jpeg")
             os.rename(os.path.join(directory, file), os.path.join(directory, new_filename))
+
+def reindex_file_names(directory):
+    files = [f for f in os.listdir(directory) if f.startswith('page_num_') and f.endswith('.jpeg')]
+    sorted_filenames = sorted(files, key=natural_sort_key)
+
+    expected_number = int(sorted_filenames[0].split('_')[-1].split('.')[0])
+    for file in sorted_filenames:
+        current_number = int(file.split('_')[-1].split('.')[0])
+        if current_number != expected_number:
+            new_filename = file.replace(f"_{current_number}.jpeg", f"_{expected_number}.jpeg")
+            os.rename(os.path.join(directory, file), os.path.join(directory, new_filename))
+        expected_number += 1
