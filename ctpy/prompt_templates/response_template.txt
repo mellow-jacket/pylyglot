@@ -4,19 +4,28 @@ Please pay very close attention to this template, and format your response accor
 I will use the token <text> to indicate where to put your response. DO NOT include <text> in your actual response.
 Please use the exact HEADERS I have specified in the template.
 This example used for this template has two speech bubbles, use as many sections as appropriate.
-Please be sure to put each new line of korean and english in a new text section.
+The number of sections should equal the number of closups that appear in the image.
 Please DO NOT make up any text for the image, only write text that is on the image I provide in the TEXT section.
 The IMAGE_DESCRIPTION section should be a very brief description of the events and characters in the image.
 
 IMAGE_DESCRIPTION
 <text>
+
 BEGIN_TEXT
+
 KOREAN_TEXT
 <text_1>
 ENGLISH_TEXT
 <translated_text1>
+
 KOREAN_TEXT
 <text_2>
 ENGLISH_TEXT
 <translated_text_2>
+
 END_TEXT
+
+Pay close attention to the template. Use as many <LANG>_TEXT -or- ENGLISH_TEXT and KOREAN_TEXT section as you need.
+Use only 1 BEGIN_TEXT and END_TEXT. Please put text from each box into a new <LANG>_TEXT section.
+Please do not separate text that appears in one box between <LANG>_TEXT sections.
+

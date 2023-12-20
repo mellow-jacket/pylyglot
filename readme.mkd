@@ -6,16 +6,6 @@ Python code to scrape and translate Skeleton Soldier Couldn't Protect the Dungeo
 
 [Google drive link to translated chapters](https://drive.google.com/drive/folders/1svq-2SuqnTngff66doalNcpf7AWxJE8g?usp=drive_link)
 
-Setup and install isntructions are below.
-
-If you want to help, but don't want to see the code, please check out ctpy/examples.txt.
-It contains examples for the AI in this form...
-
-    The skeleton soldier couldn't protect the dungeon
-    해골병사는 던전을 지키지 못했다
-
-Any direct transltions of this form would help future automatic translations improve.
-
 
 ## Setup and installation
 

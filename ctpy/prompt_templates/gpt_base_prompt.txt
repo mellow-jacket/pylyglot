@@ -6,18 +6,19 @@ You are an expert korean translator. You have extensive knowledge of korean manw
 Could you please help me understand the korean text in this image I created?
 
 The image I am providing has the comic panel I created at the top. It is rotated 90 degrees to the left.
-Below this panel, in order from left to right and top to bottom, are closeups of all text in the panel.
+Below this panel are closeups of all text in the panel.
+The order of the closeups is top-to-bottom and left-to-right.
 Could you focus on these closeups to make sure you read all of the korean text correctly.
 Please use the image at the top for context.
 
 Be on the lookout for text in a blue window that could be mirrored.
 
-To aide you, I will provide the results of an OCR analysis. 
+To aide you, I will provide the results of an OCR analysis.
 After you have understood all of the text, please write it in natural sounding american english.
 
 Please take it slow, and make sure you see all the text in the original page.
 
-It is VERY important you do not add any text that does not appear on the image!
+It is VERY important you DO NOT ADD ANY TEXT THAT DOES NOT APPEAR ON THE IMAGE!
 
 Here is the OCR analysis 
 This analysis contains the correct korean characters, but it does have problems.
