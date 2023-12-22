@@ -40,6 +40,8 @@ Check out example.ipynb to see an example.
 
 See benchmark.ipynb for an example with difficult/inconsistent pages.
 
+See benchmark_novel.ipynb for an example with a full novel chapter.
+
 Code to produce translated issues is in /notebooks. 
 
 The raw_chapters and final_chapters for these are not committed.
@@ -86,8 +88,10 @@ The raw_chapters and final_chapters for these are not committed.
 
 # BoxDrawer
 
+note: progress has been made on autoboxing of text. More refinements are needed to integrate easyOCR.
+
 A user must go through each image and draw a box around text.
-You can press 'previous', 'next', or 'quit' tomove images.
+You can press 'previous', 'next', or 'quit' to move images.
 Press next when you are done drawing boxes on an image.
 Press next without drawing boxes if there is no text.
 Focus on text in text boxes, not sound effects.
@@ -98,8 +102,22 @@ This process isn't strictly necessary. It does improve the performance of both O
 
       drawer.draw()
 
- - start/end specified so that the notebook doesnt crash
+ - start/end specified so that the notebook doesnt crash [maybe not needed?]
  - click corners to define a box around all text
+ - Use zoom and pan features as needed
+ - Click start drawing button to turn on/off box drawing
+ - Use load or clear to load any saved boxes, or clear them from the images.
+ - You can use issue.autobox() to get initial boxes, and load and clear+redraw as needed
+
+Save any drawn boxes outside of the raw_chapters folder with this
+
+      drawer.save(name = 'any_name')
+
+Load any previous saved boxes with this
+
+      drawer.load(name = name)
+
+The novel does not currently require any boxing of text due to sufficient image splitting.
 
 # Combine OCR image for GPT
 
@@ -109,12 +127,27 @@ This process isn't strictly necessary. It does improve the performance of both O
    - Improves GPT performance, but its more expensive for a bigger image
    - This call is not needed, but the prompt may need to be changed.
 
+This part of the code is in-flux. I aim to remove the need for vision models due to their expense.
+
+Other options for the vision model image generation are
+
+      issue.tile_images_for_gpt() attempts at zooming in on images boxes. Mid success
+      issue.copy_images_to_gpt() Just use the base image with no adjustments. Good with gemini
+      issue.add_boxes_to_images() Method that will redbox any boxes in the /images folder
+                                  It can be used to add red boxes before calling other methods
+
 # Translate page and make the pdf
 
    - Automatically calls gpt on image with a specified prompt
    - The prompt is defined in ctpy/translate.py 
 
-         issue.translate()
+         issue.translate(model='gpt)
+
+   - For the novel call...
+
+         issue.translate_text(model='gpt')
+
+   - To use gemini instead of gpt specify model = 'gemini
    - Bind everything into a pdf
 
          issue.make_pdf()

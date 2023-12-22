@@ -7,3 +7,4 @@ raw_chapters/*
 final_chapters/*
 !raw_chapters/example
 !final_chapters/example
+.env
