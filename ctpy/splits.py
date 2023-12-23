@@ -220,13 +220,13 @@ def increment_file_names(directory, starting_number = 0):
             os.rename(os.path.join(directory, file), os.path.join(directory, new_filename))
 
 def reindex_file_names(directory):
-    files = [f for f in os.listdir(directory) if f.startswith('page_num_') and f.endswith('.jpeg')]
+    files = [f for f in os.listdir(directory) if f.startswith('page_num_')] # and f.endswith('.jpeg')]
     sorted_filenames = sorted(files, key=natural_sort_key)
-
     expected_number = int(sorted_filenames[0].split('_')[-1].split('.')[0])
     for file in sorted_filenames:
         current_number = int(file.split('_')[-1].split('.')[0])
+        ext = file.split('_')[-1].split('.')[-1]
         if current_number != expected_number:
-            new_filename = file.replace(f"_{current_number}.jpeg", f"_{expected_number}.jpeg")
+            new_filename = file.replace(f"_{current_number}.{ext}", f"_{expected_number}.{ext}")
             os.rename(os.path.join(directory, file), os.path.join(directory, new_filename))
         expected_number += 1

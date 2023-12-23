@@ -8,10 +8,12 @@ import json
 
 from .config import config
 from .img_tools import downscale_image, _combine_pages
-from .translate import translate, translate_image_gpt, translate_image_gemini
+from .translate import translate_images, translate_image_gpt, translate_image_gemini
+from .translate import translate_text, load_chapter
 from .make_pdf import make_pdf
-from .img_download import scrape, scrape_md
+from .img_download import scrape, scrape_md, scrape_novel
 from .ocr_tools import perform_ocr_on_all_images
+from .ocr_tools import ocr as ocr_page
 from .autobox import md_image_cleaner, process_directory
 from .splits import increment_file_names, reindex_file_names
 
@@ -75,6 +77,21 @@ class issue:
             if not os.path.exists(direc):
                 os.makedirs(direc)
 
+    def repopulate_from_scrape(self):
+        # Delete files in 'raw_image' and 'raw_combined' directories
+        for directory in [self.path['raw_image'], self.path['raw_combined']]:
+            if os.path.exists(directory):
+                for file in os.listdir(directory):
+                    file_path = os.path.join(directory, file)
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+
+        # Copy files from 'scraped_image' to 'raw_image' and 'raw_combined'
+        for file_name in os.listdir(self.path['scraped_image']):
+            src_file = os.path.join(self.path['scraped_image'], file_name)
+            for dest_directory in [self.path['raw_image'], self.path['raw_combined']]:
+                shutil.copy(src_file, dest_directory)
+
     def clear_directories(self):
         '''
         housekeeping function to clear all directoires EXCEPT raw_images
@@ -98,11 +115,17 @@ class issue:
                 if not os.path.exists(dir_path):
                     os.makedirs(dir_path)
 
+    def load_chapter(self):
+        load_chapter(self)
+
+    def translate_text(self, model = 'gpt'):
+        translate_text(self, model = model)
+
     def translate(self, debug = False, model = 'gpt'):
         '''
         Wrapper for translate.py/translate
         '''
-        translate(self, debug = debug, model = model)
+        translate_images(self, debug = debug, model = model)
 
     def translate_image_gpt(self, name, ocr_result, suffix = None):
         '''
@@ -128,13 +151,22 @@ class issue:
         '''
         make_pdf(self)
 
+    def scrape_md(self):
+        scrape_md(self)
+        self.reindex_direc()
+
     def md_scrape(self):
         scrape_md(self)
         self.reindex_direc()
 
-    def md_autosplit(self):
+    def scrape_novel(self):
+        scrape_novel(self)
+        self.repopulate_from_scrape()
+        self.reindex_direc()
+
+    def md_autosplit(self, thold = 500):
         cleaner = md_image_cleaner(in_directory=self.path['scraped_image'], out_directory = self.path['raw_image'])
-        cleaner.split_raws()
+        cleaner.split_raws(thold = thold)
         cleaner.clean_splits()
         self.reindex_direc()
 
@@ -192,6 +224,9 @@ class issue:
         Wrapper for ocr_tools.py/ocr
         '''
         perform_ocr_on_all_images(self, lang=lang)
+
+    def ocr_novel(self):
+        ocr_page(self)
 
     def perform_ocr_on_all_images(self, lang = 'kor'):
         '''

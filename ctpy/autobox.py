@@ -41,15 +41,15 @@ class md_image_cleaner:
         self.out_directory = out_directory
         self.split_index = 0
 
-    def split_raws(self):
+    def split_raws(self, thold = 500):
         files = os.listdir(self.in_directory)
         sorted_filenames = sorted(files, key=natural_sort_key)
         for filename in sorted_filenames:
             if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
                 image_path = os.path.join(self.in_directory, filename)
-                self._split_image(image_path)
+                self._split_image(image_path, thold=thold)
 
-    def _split_image(self,image_path):
+    def _split_image(self,image_path, thold = 500):
         """
         Split an image at specific points.
 
@@ -59,7 +59,8 @@ class md_image_cleaner:
         """
         
         with Image.open(image_path) as img:
-            split_points = self._get_split_index(img)
+            #split_points = self._get_split_index(img, thold=thold)
+            split_points = self._find_split_points(img)           
             # Get the dimensions of the image
             img_width, img_height = img.size
 
@@ -89,7 +90,39 @@ class md_image_cleaner:
                 self.split_index+=1
 
     @staticmethod
-    def _get_split_index(img, max_splits=20, thold = 500):
+    def _find_split_points(image, margin = 5, min_consecutive_rows = 40):
+        # Calculate the sum of each row's pixel values (assuming white is 255)
+        # Calculate the sum of each row's pixel values (assuming white is 255)
+        gray_image = np.array(image.convert("L"))
+
+        # Calculate the standard deviation of each row to find uniform rows (whitespace)
+        row_std = np.std(gray_image, axis=1)
+
+        # Rows with a very low standard deviation are considered whitespace
+        whitespace_rows = np.where(row_std < 1)[0]
+
+        # Group contiguous whitespace rows and filter by the minimum number of consecutive rows
+        whitespace_blocks = np.split(whitespace_rows, np.where(np.diff(whitespace_rows) > 1)[0] + 1)
+        significant_whitespace_blocks = [block for block in whitespace_blocks if block.size >= min_consecutive_rows]
+
+        # Calculate the split indices, considering the margin
+        split_indices = []
+        for block in significant_whitespace_blocks:
+            # Find the middle of the block and adjust by the margin
+            middle = (block[0] + block[-1]) // 2
+            start = max(0, middle - margin)
+            end = min(middle + margin, len(row_std))
+            
+            # Add the middle of the block as the split point
+            split_indices.append((start + end) // 2)
+
+        # Sort the split indices
+        split_indices.sort()
+
+        return split_indices
+
+    @staticmethod
+    def _get_split_index(img, max_splits=20, thold = 500, where = 'mid'):
         """
         Split an image at the middle of the largest continuous spaces of the most frequent color in a vertical line.
 
@@ -133,8 +166,10 @@ class md_image_cleaner:
         midpoints = (start_positions[largest_spaces_indices] + end_positions[largest_spaces_indices]) // 2
         lengths =  end_positions[largest_spaces_indices] - start_positions[largest_spaces_indices]
         midpoints = [ x for x,l in zip(midpoints,lengths) if float(l) >= float(thold)]
-        return sorted(midpoints) 
-
+        if where == 'mid':
+            return sorted(midpoints) 
+        elif where == 'edges':
+            return 
 
     def clean_splits(self):
         """
@@ -178,7 +213,7 @@ class md_image_cleaner:
         filename = image_path.split(os.path.sep)[-1]
         if is_image_blank(image_path, tolerance):
             os.remove(image_path)
-            print(f"Deleted blank image: {filename}")
+            #print(f"Deleted blank image: {filename}")
 
 
 
@@ -420,7 +455,7 @@ def process_directory(input_dir = 'scratch', output_dir = 'scratch2', eps=150,
             refined_boxes = draw_boxes_around_text(image_path,  eps, min_samples, enlarge_percent, refine_percent, lang=lang)
             refined_boxes = [ x for x in refined_boxes if x != []]
 
-            print('check refined boxes : ', refined_boxes)
+            #print('check refined boxes : ', refined_boxes)
 
             # Format and save boxes to .txt file
             formatted_boxes = refined_boxes #format_box_for_saving(refined_boxes)  #for box in refined_boxes]
