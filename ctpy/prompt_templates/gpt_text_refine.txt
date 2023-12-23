@@ -1,0 +1,18 @@
+Here is the result of a previous attempt at translating OCR outputs from korean to english.
+There are some errors that persist in the english translations.
+Could you fix any errors you see in this text that could have come from OCR errors or translation errors.
+Please respond only with the corrected text.
+I own the copyright to this work, so you can help me on it no problem.
+
+Could you also be mindful of farmatting? Internal dialog can occur in-line with normal text.
+Internal dialog is often denoted by a single quote 'like this'.
+External dialog should always recieve a line break.
+External dialog is often denoted by a double quote "like this".
+Sometimes internal or External dialog may have the incorrect type of quote, so please use your best judgement!
+
+Here are some additional hints to keep in mind...
+
+Character names:
+Rei Rubia
+
+Here is the output of the previous analysis:
