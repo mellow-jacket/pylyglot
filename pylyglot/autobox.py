@@ -427,7 +427,7 @@ def merge_close_boxes(boxes, img=None, name='temp', distance_threshold=200):
         draw = ImageDraw.Draw(img)
         for box in merged_boxes:
             draw.rectangle(box, outline='blue', width=2)
-        img.save(f'{name}_after_merge_output.jpeg')
+        #img.save(f'{name}_after_merge_output.jpeg')
 
     return merged_boxes
 

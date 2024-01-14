@@ -1,89 +1,24 @@
-{'_done': True, '_iterator': None, '_result': candidates {
-  index: 0
-  content {
-    parts {
-      text: " IMAGE_DESCRIPTION\nA chibi skeleton with blue eyes is sitting on the ground with its hands together. The skeleton is wearing a white robe and has a red sash tied around its waist. The skeleton is looking up and has a speech bubble with Korean text in front of its mouth.\n\nBEGIN_TEXT\n\nKOREAN_TEXT\n세상에 작별인\nENGLISH_TEXT\nFarewell to the world\n\nEND_TEXT"
-    }
-    role: "model"
-  }
-  finish_reason: STOP
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
+{
+    "id": "chatcmpl-8UNwSeVfgjnDbRr8VOF2ilvqtuPPd",
+    "object": "chat.completion",
+    "created": 1702252564,
+    "model": "gpt-4-1106-vision-preview",
+    "usage": {
+        "prompt_tokens": 2890,
+        "completion_tokens": 68,
+        "total_tokens": 2958
+    },
+    "choices": [
+        {
+            "message": {
+                "role": "assistant",
+                "content": "IMAGE_DESCRIPTION\nThe image depicts a cartoon-style skeleton wearing armor and a red bandana. The skeleton wields a mace in one hand and is speaking with a speech bubble containing Korean text.\n\nBEGIN_TEXT\nKOREAN_TEXT\n세상에 작별 인\nENGLISH_TEXT\nFarewell to the world\nEND_TEXT"
+            },
+            "finish_details": {
+                "type": "stop",
+                "stop": "<|fim_suffix|>"
+            },
+            "index": 0
+        }
+    ]
 }
-prompt_feedback {
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
-}
-, '_chunks': [candidates {
-  index: 0
-  content {
-    parts {
-      text: " IMAGE_DESCRIPTION\nA chibi skeleton with blue eyes is sitting on the ground with its hands together. The skeleton is wearing a white robe and has a red sash tied around its waist. The skeleton is looking up and has a speech bubble with Korean text in front of its mouth.\n\nBEGIN_TEXT\n\nKOREAN_TEXT\n세상에 작별인\nENGLISH_TEXT\nFarewell to the world\n\nEND_TEXT"
-    }
-    role: "model"
-  }
-  finish_reason: STOP
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
-}
-prompt_feedback {
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
-}
-], '_error': None}
