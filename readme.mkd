@@ -29,14 +29,12 @@ In theory this tool could be applied to many sotries and languages, but I have n
  - Creation of output.txt and output.docx
 
 ### Webtoon
-
  - Autobox text on page (getting better, needs more work)
  - UI for refining text boxes (clunky matplotlib)
  - OCR for consistent vision-LLM performance
- - Image processing for better vision-LLM results
- - better cost minimization strategies (focus dropped, needs more work)
+ - Image processing for better vision-LLM results (need better strats for min cost)
  - Zero shot translations (more attempts could help, needs more work)
- - output.pdf generation (no autotypesetting without better autoboxing)
+ - Output.pdf generation (no autotypesetting without better autoboxing)
 
 ## Setup and installation
 
@@ -52,6 +50,7 @@ You will need to create a file named ".env"
 In this file, paste your api_key as...
 
    API_KEY='your_openai_key'
+   
    VERTEX='your_vertex_key'
 
 With conda on your system path run...
