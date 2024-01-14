@@ -13,3 +13,5 @@ final_chapters/*
 testerr/*
 notebooks/english*
 notebooks/issue*
+local_benchmark/*
+benchmark/*
