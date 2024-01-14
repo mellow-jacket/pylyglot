@@ -1,89 +1,24 @@
-{'_done': True, '_iterator': None, '_result': candidates {
-  index: 0
-  content {
-    parts {
-      text: " IMAGE_DESCRIPTION\nA chibi skeleton with blue eyes is sitting on the ground with its hands together. The skeleton is wearing a white robe and has a red sash tied around its waist. The skeleton is looking up and has a speech bubble with Korean text in front of its mouth.\n\nBEGIN_TEXT\n\nKOREAN_TEXT\n세계여, 안녕하세요!\nENGLISH_TEXT\nWorld, hello!\n\nEND_TEXT"
-    }
-    role: "model"
-  }
-  finish_reason: STOP
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
+{
+    "id": "chatcmpl-8UNwNkqF72mJNNYyYnkhXswf86o8k",
+    "object": "chat.completion",
+    "created": 1702252559,
+    "model": "gpt-4-1106-vision-preview",
+    "usage": {
+        "prompt_tokens": 2708,
+        "completion_tokens": 94,
+        "total_tokens": 2802
+    },
+    "choices": [
+        {
+            "message": {
+                "role": "assistant",
+                "content": "IMAGE_DESCRIPTION\nThe image shows a cute, stylized skeleton with large blue eyes and an oversized head in comparison to its body. It is seated on the ground in a cross-legged position with its hands resting on its knees. The skeleton is facing towards us, and there's a speech bubble coming from it, containing Korean text.\n\nBEGIN_TEXT\nKOREAN_TEXT\n세계여, 안 녕하세요!\nENGLISH_TEXT\nHello world!\nEND_TEXT"
+            },
+            "finish_details": {
+                "type": "stop",
+                "stop": "<|fim_suffix|>"
+            },
+            "index": 0
+        }
+    ]
 }
-prompt_feedback {
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
-}
-, '_chunks': [candidates {
-  index: 0
-  content {
-    parts {
-      text: " IMAGE_DESCRIPTION\nA chibi skeleton with blue eyes is sitting on the ground with its hands together. The skeleton is wearing a white robe and has a red sash tied around its waist. The skeleton is looking up and has a speech bubble with Korean text in front of its mouth.\n\nBEGIN_TEXT\n\nKOREAN_TEXT\n세계여, 안녕하세요!\nENGLISH_TEXT\nWorld, hello!\n\nEND_TEXT"
-    }
-    role: "model"
-  }
-  finish_reason: STOP
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
-}
-prompt_feedback {
-  safety_ratings {
-    category: HARM_CATEGORY_SEXUALLY_EXPLICIT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HATE_SPEECH
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_HARASSMENT
-    probability: NEGLIGIBLE
-  }
-  safety_ratings {
-    category: HARM_CATEGORY_DANGEROUS_CONTENT
-    probability: NEGLIGIBLE
-  }
-}
-], '_error': None}

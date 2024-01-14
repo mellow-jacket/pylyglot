@@ -53,12 +53,13 @@ The raw_chapters and final_chapters for these are not committed.
 # Initialize issue class
 
  - name determines the name in raw_ and final_chapters
- - url only used in scrape
+ - url only used in scrape. Specify file or folder or use local images.
  - api_key = None will run in a debug mode
 
-        issue = ct.issue(name='example',url = None, api_key = api_key )
+        import pylyglot as glot
+        issue = glot.issue(name='example',url = <local_path or url>, api_key = api_key )
 
-# Scarping images
+# Scraping images
 
       issue.scrape() 
 
@@ -72,11 +73,11 @@ The raw_chapters and final_chapters for these are not committed.
 
  split file at click, combine top with previous, bottom with next, reindex names
 
-      ct.split_file(rel_path)
+      glot.split_file(rel_path)
 
  split file at click, two new files, reindex names
 
-      ct.separate_file(rel_path) 
+      glot.separate_file(rel_path) 
 
  older combine based on raw_image numbering [must run after downsample]
 
@@ -102,7 +103,7 @@ Focus on text in text boxes, not sound effects.
 
 This process isn't strictly necessary. It does improve the performance of both OCR and GPT. 
 
-      drawer = ct.BoxDrawer(test,start = 0, end = 20)
+      drawer = glot.BoxDrawer(test,start = 0, end = 20)
 
       drawer.draw()
 

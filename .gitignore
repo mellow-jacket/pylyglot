@@ -11,3 +11,5 @@ final_chapters/*
 !final_chapters/example
 .env
 testerr/*
+notebooks/english*
+notebooks/issue*
