@@ -1,6 +1,11 @@
-# CTpy Comic Translator
+# Pylyglot
+## Translate webtoons and webnovels with python
 
-Python code to scrape and translate Skeleton Soldier Couldn't Protect the Dungeon.
+The goal of this project is to provide something to fill the gap between a raw release and an official/unofficial translation.
+
+Recent attention has been focused on translating the Skeleton Soldier web novel.
+
+In theory this tool could be applied to many sotries and languages, but I have no immediate plans outside of Korean -> English  for Skeleton Soldier.
 
 [View an example translation](/final_chapters/example.pdf)
 
@@ -20,13 +25,14 @@ You will need to create a file named ".env"
 
 In this file, paste your api_key as...
 
-   API_KEY='your_api_key'
+   API_KEY='your_openai_key'
+   VERTEX='your_vertex_key'
 
 With conda on your system path run...
 
-    conda create --name comic_translator python=3.11.6
+    conda create --name py_translator python=3.11.6
 
-    conda activate comic_translator
+    conda activate py_translator
 
     pip install -r requirements.txt
 
@@ -36,11 +42,9 @@ Test installation
 
 Pytest should run succesffully if everything is set up
 
-Check out example.ipynb to see an example.
+Check out example_comic.ipynb to see an example webtoon.
 
-See benchmark.ipynb for an example with difficult/inconsistent pages.
-
-See benchmark_novel.ipynb for an example with a full novel chapter.
+Check out example_novel.ipynb so see an example webnovel.
 
 Code to produce translated issues is in /notebooks. 
 

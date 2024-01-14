@@ -15,7 +15,7 @@ with open(PATHS.text_refine, 'r', encoding='utf-8') as file:
 
 
 
-def translate_text_gemini(self, message):
+def translate_text_gemini(self, message, half = None):
     '''
     Function to translate OCR text using gemini
     '''
@@ -23,18 +23,22 @@ def translate_text_gemini(self, message):
     model = genai.GenerativeModel('gemini-pro')
 
     payload = {
-        "max_output_tokens": 4000,
+        "max_output_tokens": 4096,
         "temperature": 0.5,
         #"top_p": 1.0,
         #"top_k": 32, 
     }
 
-    response = model.generate_content(message, generation_config=payload)
+    if half is not None:
+        txt_name = f'RAW{self.name}_half{half}.txt'
+    else:
+        txt_name = f'RAW{self.name}.txt'
 
-
-    txt_name = f'RAW{self.name}.txt'
     with open(os.path.join(self.path['prompt'],txt_name), 'w') as f:
         f.write(message)
+
+    response = model.generate_content(message, generation_config=payload)
+
     with open(os.path.join(self.path['response'],txt_name), 'w') as f:
         f.write(str(vars(response)))
 
@@ -44,18 +48,16 @@ def translate_text_gemini(self, message):
 
     return text
 
-def refine_translation_gemini(self):
+def refine_translation_gemini(self, half = None):
     '''
     Another shot at gpt to refine the translations
     '''
-    txt_name = f'RAW{self.name}.txt'
+    if half is not None:
+        txt_name = f'RAW{self.name}_half{half}.txt'
+    else:
+        txt_name = f'RAW{self.name}.txt'
     with open(os.path.join(self.path['text'], txt_name), 'r') as file:
         text = file.read()
-
-    headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {self.api_key}"
-    }
 
     message = REFINE + text
 
@@ -63,7 +65,7 @@ def refine_translation_gemini(self):
     model = genai.GenerativeModel('gemini-pro')
 
     payload = {
-        "max_output_tokens": 4000,
+        "max_output_tokens": 4096,
         "temperature": 0.5,
         #"top_p": 1.0,
         #"top_k": 32, 
@@ -71,7 +73,10 @@ def refine_translation_gemini(self):
 
     response = model.generate_content(message, generation_config=payload)
 
-    txt_name = f'{self.name}.txt'
+    if half is not None:
+        txt_name = f'{self.name}_half{half}.txt'
+    else:
+        txt_name = f'{self.name}.txt'
     with open(os.path.join(self.path['prompt'],txt_name), 'w') as f:
         f.write(message)
     with open(os.path.join(self.path['response'],txt_name), 'w') as f:

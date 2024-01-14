@@ -19,6 +19,9 @@ Mr. Skeleton!
 Isaac
 아이적
 
+Amber
+요청합니다
+
 Gilles
 기스
 
@@ -91,6 +94,8 @@ The skeleton soldier and his party have been stopped in their tracks
 We've passed the point of no return! Skeleton! Take your life! We have twisted causality too much!
 우리가 돌이킬 수 없는 지점까지 넘어버린 거야! 해골! 목숨을 끊어라! 우리가 인과를 너무 많이 비틀어빼버린 거다!
 
+문기류 물리 저향
+Bludgeon resistance
 
 DO NOT INCLUDE THESE EXAMPLES DIRECTLY unless they happen to occur exactly.
 Please think about them before responding.
@@ -101,7 +106,7 @@ I also want to give you some additional english details for which I do not have 
 
 Character names:
 Lady Succubus, Botis, Malphas, Purson, Baal, Jagan, Se'eray, Murmur, Vapula, Furcas, Gaap, Zagan, Vassago, Gilaut, Owain, Hamelein, Andre, Fenrir,
-Rei Rubia
+Rei Rubia, Gilles De Rei
 
 Background information:
 The skeleton soldier dies and is resurrected again and again.
@@ -112,4 +117,6 @@ Rubia is the novice necromancer that woke the skeleton from the dead.
 
 Locations:
 Amber, T&T Guild
+
+PAY CLOSE ATTENTION AND MAKE SURE TO TRANSLATE EVERY Page
 

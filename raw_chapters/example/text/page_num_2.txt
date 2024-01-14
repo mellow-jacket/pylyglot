@@ -1,9 +1,11 @@
-IMAGE_DESCRIPTION
-The image depicts a cartoon-style skeleton wearing armor and a red bandana. The skeleton wields a mace in one hand and is speaking with a speech bubble containing Korean text.
+ IMAGE_DESCRIPTION
+A chibi skeleton with blue eyes is sitting on the ground with its hands together. The skeleton is wearing a white robe and has a red sash tied around its waist. The skeleton is looking up and has a speech bubble with Korean text in front of its mouth.
 
 BEGIN_TEXT
+
 KOREAN_TEXT
-세상에 작별 인
+세상에 작별인
 ENGLISH_TEXT
 Farewell to the world
+
 END_TEXT

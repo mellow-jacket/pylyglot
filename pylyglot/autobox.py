@@ -15,8 +15,8 @@ md.clean_splits()
 
 import os
 import numpy as np
-import pytesseract
-from PIL import Image, ImageDraw
+import easyocr
+from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
 from sklearn.cluster import DBSCAN
 import json
 
@@ -30,6 +30,41 @@ def is_image_blank(image_path, tolerance):
     with Image.open(image_path) as img:
         data = np.array(img)
     return np.all(is_close_to_white(data, tolerance))
+
+
+def box_from_image(image, lang='ko'):
+    # Adjust language codes if necessary
+    if lang == 'kor':
+        lang = 'ko'
+    elif lang == 'eng':
+        lang = 'en'
+
+    # Convert PIL Image to numpy array if needed
+    if isinstance(image, Image.Image):
+        image = np.array(image)
+
+    # Ensure the image is in a valid format for EasyOCR
+    if not isinstance(image, (str, bytes, np.ndarray)):
+        raise ValueError("Image must be a file path, URL, byte stream, or numpy array")
+
+    # Create a reader object
+    reader = easyocr.Reader([lang])  
+
+    # Use EasyOCR to get text and bounding boxes
+    result = reader.readtext(image, detail=1)
+
+    # Process result to get boxes in the [[x1, y1], [x2, y2]] format
+    boxes = []
+    for detection in result:
+        # Extract the corners
+        corners = detection[0]
+        top_left = min(corners, key=lambda point: (point[0], point[1]))
+        bottom_right = max(corners, key=lambda point: (point[0], point[1]))
+
+        # Append the sorted corners in the required format
+        boxes.append([list(top_left), list(bottom_right)])
+    
+    return boxes
 
 class md_image_cleaner:
 
@@ -281,56 +316,144 @@ def combine_boxes(box1, box2, enlarge_percent = 0.1, height_mult = 3, orig = Non
     return enlarged_box
 
 
-def cluster_boxes(boxes, eps=120, min_samples=8):
-    """
-    Cluster boxes using DBSCAN based on their positions and area.
+# def cluster_boxes(boxes, eps=1000, min_samples=1, img = None):
+#     """
+#     Cluster boxes using DBSCAN based on their positions and area.
 
-    :param boxes: List of bounding boxes (x1, y1, x2, y2).
-    :param eps: Maximum distance between two boxes to be considered in the same neighborhood.
-    :param min_samples: Minimum number of boxes in a neighborhood to form a cluster.
-    :return: List of clustered bounding boxes.
-    """
-    # Calculate features: x_center, y_center, area
-    features = []
-    for box in boxes:
-        x_center = (box[0] + box[2]) / 2
-        y_center = (box[1] + box[3]) / 2
-        area = (box[2] - box[0]) * (box[3] - box[1])
-        features.append([x_center, y_center, area])
-        #features.append([area])
+#     :param boxes: List of bounding boxes (x1, y1, x2, y2).
+#     :param eps: Maximum distance between two boxes to be considered in the same neighborhood.
+#     :param min_samples: Minimum number of boxes in a neighborhood to form a cluster.
+#     :return: List of clustered bounding boxes.
+#     """
+#     # Calculate features: x_center, y_center, area
+#     features = []
+#     for box in boxes:
+#         x_center = (box[0] + box[2]) / 2
+#         y_center = (box[1] + box[3]) / 2
+#         area = (box[2] - box[0]) * (box[3] - box[1])
+#         features.append([x_center, y_center, area])
+#         #features.append([area])
 
-    if features:
-        # Perform DBSCAN clustering
-        clustering = DBSCAN(eps=eps, min_samples=min_samples).fit(features)
-        labels = clustering.labels_
+#     if features:
+#         # Perform DBSCAN clustering
+#         clustering = DBSCAN(eps=eps, min_samples=min_samples).fit(features)
+#         labels = clustering.labels_
 
-        # Group boxes by cluster
-        clustered_boxes = {}
-        for label, box in zip(labels, boxes):
-            if label == -1:  # Skip noise
-                continue
-            if label not in clustered_boxes:
-                clustered_boxes[label] = [box]
-            else:
-                clustered_boxes[label].append(box)
+#         # Group boxes by cluster
+#         clustered_boxes = {}
+#         for label, box in zip(labels, boxes):
+#             if label == -1:  # Skip noise
+#                 continue
+#             if label not in clustered_boxes:
+#                 clustered_boxes[label] = [box]
+#             else:
+#                 clustered_boxes[label].append(box)
 
-        # Combine boxes in each cluster
-        combined_boxes = []
-        for label, group in clustered_boxes.items():
-            # Combine boxes in the cluster
-            x1 = min(box[0] for box in group)
-            y1 = min(box[1] for box in group)
-            x2 = max(box[2] for box in group)
-            y2 = max(box[3] for box in group)
+#         # Combine boxes in each cluster
+#         combined_boxes = []
+#         for label, group in clustered_boxes.items():
+#             # Combine boxes in the cluster
+#             x1 = min(box[0] for box in group)
+#             y1 = min(box[1] for box in group)
+#             x2 = max(box[2] for box in group)
+#             y2 = max(box[3] for box in group)
 
-            combined_boxes.append((x1, y1, x2, y2))
+#             combined_boxes.append((x1, y1, x2, y2))
 
-        # Merge overlapping boxes across clusters
-        merged_boxes = merge_overlapping_boxes(combined_boxes)
-    else:
-        merged_boxes = []
+#         # Merge overlapping boxes across clusters
+#         merged_boxes = merge_overlapping_boxes(combined_boxes)
+#     else:
+#         merged_boxes = []
+
+#     # if img is not None:
+        
+#     #     draw = ImageDraw.Draw(img)
+#     #     for box in boxes:
+#     #         left, top, right, bottom = box
+#     #         print(left, top, right, bottom)  # Debugging print
+#     #         if top > bottom:
+#     #             top, bottom = bottom, top
+#     #         if left > right:
+#     #             left, right = right, left
+
+#     #         draw.rectangle([left, top, right, bottom], outline='red', width=2)
+#     #     img.save('temp_output.jpeg')
+#     return merged_boxes
+
+def merge_close_boxes(boxes, img=None, name='temp', distance_threshold=200):
+    # Define a simple distance function
+    def box_distance(box1, box2):
+        center1 = ((box1[0] + box1[2]) / 2, (box1[1] + box1[3]) / 2)
+        center2 = ((box2[0] + box2[2]) / 2, (box2[1] + box2[3]) / 2)
+        return np.sqrt((center1[0] - center2[0]) ** 2 + (center1[1] - center2[1]) ** 2)
+
+    # if img is not None:
+    #     # Make a copy of the image to draw on
+    #     draw_img = img.copy()
+    #     draw = ImageDraw.Draw(draw_img)
+    #     for box in boxes:
+    #         # Draw the original boxes
+    #         draw.rectangle(box, outline='red', width=2)
+    #     draw_img.save(f'{name}_before_merge_output.jpeg')
+
+    # Make a copy of the boxes to work on
+    boxes_to_merge = boxes.copy()
+    merged_boxes = []
+    while boxes_to_merge:
+        current = boxes_to_merge.pop()
+        close_boxes = [current]
+
+        # Find boxes close to the current box
+        for other in boxes_to_merge[:]:
+            if box_distance(current, other) < distance_threshold:
+                close_boxes.append(other)
+                boxes_to_merge.remove(other)
+
+        # Merge close boxes
+        x1 = min(box[0] for box in close_boxes)
+        y1 = min(box[1] for box in close_boxes)
+        x2 = max(box[2] for box in close_boxes)
+        y2 = max(box[3] for box in close_boxes)
+
+        # Ensure correct orientation of the box
+        x1, y1, x2, y2 = min(box[0] for box in close_boxes), min(box[1] for box in close_boxes), max(box[2] for box in close_boxes), max(box[3] for box in close_boxes)
+        if y2 < y1:
+            y1, y2 = y2, y1  # Swap y1 and y2 if they are in the wrong order
+
+        merged_boxes.append((x1, y1, x2, y2))
+
+    if img is not None:
+        # Draw the merged boxes on the original image
+        draw = ImageDraw.Draw(img)
+        for box in merged_boxes:
+            draw.rectangle(box, outline='blue', width=2)
+        img.save(f'{name}_after_merge_output.jpeg')
 
     return merged_boxes
+
+def process_image(img, scale_factor = 1.0):
+    # Calculate new dimensions
+    new_width = int(img.width * scale_factor)
+    new_height = int(img.height * scale_factor)
+    # Resize the image using the LANCZOS resampling filter
+    resized_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+    # Convert to grayscale
+    ocr_img = resized_img.convert('L')
+
+    # Increase contrast
+    enhancer = ImageEnhance.Contrast(ocr_img)
+    ocr_img = enhancer.enhance(1.5)  # play around with the factor as needed
+
+    # Binarize the image
+    threshold = 190  # This is an example threshold value
+    ocr_img = ocr_img.point(lambda p: p > threshold and 255)
+
+    # Denoise
+    ocr_img = ocr_img.filter(ImageFilter.MedianFilter(size=3))
+
+    # Sharpen
+    ocr_img = ocr_img.filter(ImageFilter.UnsharpMask())
+    return ocr_img
 
 def process_region(image_path, region_box, eps=150, min_samples=10, enlarge_percent=0.1, lang='eng'):
     """
@@ -357,18 +480,26 @@ def process_region(image_path, region_box, eps=150, min_samples=10, enlarge_perc
     img_width, img_height = roi.size
     # Convert to grayscale for OCR
     ocr_img = roi #.convert('L')
-    boxes = pytesseract.image_to_boxes(ocr_img, lang=lang)
+    #boxes = pytesseract.image_to_boxes(ocr_img, lang=lang)
+    boxes = box_from_image(ocr_img, lang = lang)
 
     # Process boxes
     processed_boxes = []
-    for box in boxes.splitlines():
-        char, left, bottom, right, top, _ = box.split(' ')
-        left, bottom, right, top = map(int, [left, bottom, right, top])
-        processed_boxes.append((left, roi.height - top, right, roi.height - bottom))
+    for box in boxes:
+        # Extract coordinates
+        top_left, bottom_right = box
+        left, top = top_left
+        right, bottom = bottom_right
+
+        # Flip the y-coordinates
+        flipped_top = top #img.height - top
+        flipped_bottom = bottom #img.height - bottom
+
+        processed_boxes.append((left, flipped_top, right, flipped_bottom))
 
     # Cluster boxes
-    clustered_boxes = cluster_boxes(processed_boxes, eps=eps, min_samples=min_samples)
-
+    #clustered_boxes = cluster_boxes(processed_boxes, eps=eps, min_samples=min_samples)
+    clustered_boxes = merge_close_boxes(processed_boxes, img=ocr_img, name='test2')
     # Map boxes back to original image coordinates
     refined_boxes = []
     for box in clustered_boxes:
@@ -386,27 +517,36 @@ def process_region(image_path, region_box, eps=150, min_samples=10, enlarge_perc
 
     return formatted_boxes
 
-def draw_boxes_around_text(image_path, eps=150, min_samples=10, 
-                           enlarge_percent=0.1, refine_percent=0.1,
+def draw_boxes_around_text(image_path, eps=200, min_samples=2, 
+                           enlarge_percent=0.01, refine_percent=0.01,
                            save_image = False, lang='eng'):
     # Load the image
     img = Image.open(image_path)
     # Get the dimensions of the image
     img_width, img_height = img.size
 
-    ocr_img = img.convert('L')
-    boxes = pytesseract.image_to_boxes(ocr_img)
-
+    #ocr_img = img.convert('L')
+    ocr_img = process_image(img)
+    #boxes = pytesseract.image_to_boxes(ocr_img)
+    boxes = box_from_image(ocr_img, lang=lang)
+    
     # Process boxes
     processed_boxes = []
-    for box in boxes.splitlines():
-        char, left, bottom, right, top, _ = box.split(' ')
-        left, bottom, right, top = map(int, [left, bottom, right, top])
-        processed_boxes.append((left, img.height - top, right, img.height - bottom))
-        #processed_boxes.append((left,  top, right,  bottom))
+    for box in boxes:
+        # Extract coordinates
+        top_left, bottom_right = box
+        left, top = top_left
+        right, bottom = bottom_right
 
+        # Flip the y-coordinates
+        flipped_top = top #img.height - top
+        flipped_bottom = bottom #img.height - bottom
+
+        processed_boxes.append((left, flipped_top, right, flipped_bottom))
     # Cluster boxes
-    clustered_boxes = cluster_boxes(processed_boxes, eps=eps, min_samples=min_samples)
+    #clustered_boxes = cluster_boxes(processed_boxes, eps=eps, min_samples=min_samples, img=ocr_img)
+    clustered_boxes = merge_close_boxes(processed_boxes, img = ocr_img, name='test1')
+
 
     # Refine boxes
     out_refined_boxes = []
@@ -443,8 +583,8 @@ def format_box_for_saving(boxes):
     return [[(y[0],y[1]),(y[2],y[3])] for y in boxes]
     #return adjusted_coords
 
-def process_directory(input_dir = 'scratch', output_dir = 'scratch2', eps=150, 
-                      min_samples=10, enlarge_percent=0.5, refine_percent=0.1,
+def process_directory(input_dir = 'scratch', output_dir = 'scratch2', eps=200, 
+                      min_samples=1, enlarge_percent=0.01, refine_percent=0.01,
                       lang='eng'):
     for filename in os.listdir(input_dir):
         if filename.endswith(".jpeg") or filename.endswith(".jpg"):
@@ -471,7 +611,8 @@ def draw_all_ocr_boxes(image_path, output_path, lang = 'eng'):
 
     custom_config = r'--oem 1 --psm 13'
     # Perform OCR to get bounding boxes of text
-    boxes = pytesseract.image_to_boxes(img, lang = lang) #, config=custom_config)
+    #boxes = pytesseract.image_to_boxes(img, lang = lang) #, config=custom_config)
+    boxes = box_from_image(img, lang=lang)
 
     # Draw each box on the image
     draw = ImageDraw.Draw(img)

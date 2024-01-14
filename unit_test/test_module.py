@@ -1,5 +1,5 @@
 import pytest
-import ctpy as ct
+import pylyglot as ct
 from dotenv import load_dotenv
 import os
 
@@ -11,11 +11,13 @@ load_dotenv()
 #     api_key = os.getenv('API_KEY')
 #     assert api_key is not None, "API_KEY should not be None"
 
+URL = 'test_data\\comic'
+
 # Test the initialization of the `issue` object
 def test_issue_initialization():
     ex = ct.issue(
         name='unit_test',
-        url=None,  # None uses test_images
+        url=URL,  # None uses test_images
         api_key=os.getenv('API_KEY')
     )
     assert ex is not None, "Issue object should be initialized"
@@ -24,7 +26,7 @@ def test_issue_initialization():
 def test_scrape():
     ex = ct.issue(
         name='unit_test',
-        url=None,
+        url=URL,
         api_key=os.getenv('API_KEY')
     )
     ex.scrape()
@@ -34,7 +36,7 @@ def test_scrape():
 def test_downsample():
     ex = ct.issue(
         name='unit_test',
-        url=None,
+        url=URL,
         api_key=os.getenv('API_KEY')
     )
     ex.scrape()
@@ -45,7 +47,7 @@ def test_downsample():
 def test_combine_gpt_and_ocr():
     ex = ct.issue(
         name='unit_test',
-        url=None,
+        url=URL,
         api_key=os.getenv('API_KEY')
     )
     ex.scrape()
@@ -57,7 +59,7 @@ def test_combine_gpt_and_ocr():
 def test_translate():
     ex = ct.issue(
         name='unit_test',
-        url=None,
+        url=URL,
         api_key=os.getenv('API_KEY')
     )
     ex.scrape()
@@ -70,7 +72,7 @@ def test_translate():
 def test_make_pdf():
     ex = ct.issue(
         name='unit_test',
-        url=None,
+        url=URL,
         api_key=os.getenv('API_KEY')
     )
     ex.scrape()

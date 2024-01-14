@@ -15,5 +15,5 @@ class config:
         self.text_refine = os.path.join(self.prompts,'gpt_text_refine.txt')
 
         self.img_path = os.path.join(self.abs_path,'..')
-        self.testimg_path = os.path.join(self.abs_path,'..','test_images')
+        self.testimg_path = os.path.join(self.abs_path,'..','test_data/comic')
         self.benchmark_path = os.path.join(self.abs_path,'..','benchmark')
