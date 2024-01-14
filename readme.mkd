@@ -12,6 +12,32 @@ In theory this tool could be applied to many sotries and languages, but I have n
 [Google drive link to translated chapters](https://drive.google.com/drive/folders/1svq-2SuqnTngff66doalNcpf7AWxJE8g?usp=drive_link)
 
 
+## Primary Features/Goals (and notes)
+
+### General
+ - Systematic management of base images
+ - OCR facilitates kor.jpeg -> kor.txt
+ - Systematic prompting of LLM facilitates kor.txt -> eng.txt
+ - Output management
+ - Translate Kor -> Eng (More options needed)
+
+### Webnovel
+ - Automatic split and combine of images to isolate close text
+ - High quality OCR to avoid need for image LLM modalities
+ - Systematic multi-shot prompting for refinement
+ - Translate full chapters or half chapters (needs more options)
+ - Creation of output.txt and output.docx
+
+### Webtoon
+
+ - Autobox text on page (getting better, needs more work)
+ - UI for refining text boxes (clunky matplotlib)
+ - OCR for consistent vision-LLM performance
+ - Image processing for better vision-LLM results
+ - better cost minimization strategies (focus dropped, needs more work)
+ - Zero shot translations (more attempts could help, needs more work)
+ - output.pdf generation (no autotypesetting without better autoboxing)
+
 ## Setup and installation
 
 This module will require conda for setting up the enviroment. 
