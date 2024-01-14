@@ -9,7 +9,7 @@ import json
 from .config import config
 from .img_tools import downscale_image, _combine_pages
 from .translate import translate_images, translate_image_gpt, translate_image_gemini
-from .translate import translate_text, load_chapter
+from .translate import translate_text, load_chapter, translate_text_by_halves
 from .make_pdf import make_pdf
 from .img_download import scrape, scrape_md, scrape_novel
 from .ocr_tools import perform_ocr_on_all_images
@@ -22,6 +22,20 @@ cfg = config()
 IMGPATH = cfg.img_path
 TESTPATH = cfg.testimg_path
 BENCHMARK = cfg.benchmark_path
+
+def check_url(string):
+    # Check if the string follows the pattern of a URL
+    if string.startswith(('http://', 'https://')):
+        return "url"
+    
+    if '.com' in string:
+        return 'url'
+    
+    # Check if the string is a valid file path
+    if os.path.exists(string):
+        return "path"
+    
+    return None
 
 class issue:
     '''
@@ -38,6 +52,7 @@ class issue:
                 url = 'https://newtoki317.com/webtoon/32675929?toon=%EC%9D%BC%EB%B0%98%EC%9B%B9%ED%88%B0',
                 api_key = None,
                 gemini_key = None,
+                raw_direc = None
                 ):
         '''
         Issue of skeleton soldier
@@ -54,7 +69,12 @@ class issue:
 
         self.gemini_key = gemini_key
 
-        self.raw_direc = 'raw_chapters'
+        if raw_direc is not None:
+            self.raw_direc = raw_direc
+        elif 'Chapter' in name:
+            self.raw_direc = 'raw_novel'
+        else:
+            self.raw_direc = 'raw_chapters'
         self.final_direc = 'final_chapters'
 
         base_path = os.path.join(IMGPATH,self.raw_direc, name)
@@ -121,6 +141,9 @@ class issue:
     def translate_text(self, model = 'gpt'):
         translate_text(self, model = model)
 
+    def translate_text_by_halves(self, model = 'gpt'):
+        translate_text_by_halves(self, model = model)
+
     def translate(self, debug = False, model = 'gpt'):
         '''
         Wrapper for translate.py/translate
@@ -174,21 +197,33 @@ class issue:
             # reindex file names given label for path 
             reindex_file_names(self.path[label])
 
-    def scrape(self):
+    def scrape_local(self):
+        if os.path.isfile(self.url):
+            new_filename = 'page_num_1.jpeg'
+            destination_path = os.path.join(self.path['scraped_image'], new_filename)
+            # Now copy the file to the new destination with the new name
+            shutil.copy(self.url, destination_path)
+        else:
+            for filename in os.listdir(self.url):
+                file_path = os.path.join(self.url, filename)
+                if os.path.isfile(file_path):
+                    shutil.copy(file_path, self.path['scraped_image'])        
+        self.repopulate_from_scrape()
+        self.reindex_direc()
+
+    def scrape(self): 
         '''
         wrapper for img_download.py/scrap
         Exceptions handled here
         '''
-        if self.url is None:
-            for filename in os.listdir(TESTPATH):
-                file_path = os.path.join(TESTPATH, filename)
-                if os.path.isfile(file_path):
-                    shutil.copy(file_path, self.path['scraped_image'])        
-        elif self.url == 'benchmark':
-            for filename in os.listdir(BENCHMARK):
-                file_path = os.path.join(BENCHMARK, filename)
-                if os.path.isfile(file_path):
-                    shutil.copy(file_path, self.path['scraped_image'])  
+        url_type = check_url(self.url)  
+        # if self.url == 'benchmark':
+        #     for filename in os.listdir(BENCHMARK):
+        #         file_path = os.path.join(BENCHMARK, filename)
+        #         if os.path.isfile(file_path):
+        #             shutil.copy(file_path, self.path['scraped_image'])  
+        if url_type == 'path':
+            self.scrape_local()   
         else:
             scrape(self)
 

@@ -26,7 +26,7 @@ def scrape(self):
     # Navigate to the page
     driver.get(self.url)
     # Give the page some time to load
-    time.sleep(20)
+    time.sleep(5)
 
     # Find all images on the page using the updated method
     images = driver.find_elements(By.TAG_NAME, 'img')
@@ -50,7 +50,7 @@ def scrape(self):
             with Image.open(BytesIO(img_data)) as img:
                 file_name = os.path.join(self.path['scraped_image'], f'page_num_{ind}.jpeg')
                 img.convert('RGB').save(file_name, 'JPEG')
-                print(f'Converted and saved {img_url} to {file_name}')
+                #print(f'Converted and saved {img_url} to {file_name}')
         except IOError:
             print(f"Cannot convert image: {img_url}")
         

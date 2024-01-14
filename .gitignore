@@ -4,6 +4,8 @@ __pycache__/*
 box_saves/*
 
 raw_chapters/*
+raw_novel/*
+jpegs/*
 final_chapters/*
 !raw_chapters/example
 !final_chapters/example

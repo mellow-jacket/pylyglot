@@ -87,7 +87,7 @@ def refine_translation(self):
             "content": message
         }
     ],
-    "max_tokens": 4000
+    "max_tokens": 4096
     }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
